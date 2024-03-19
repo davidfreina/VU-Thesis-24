@@ -1,0 +1,1 @@
+Dockerfile from [github.com/atlarge-research/continuum](https://github.com/atlarge-research/continuum/blob/main/application/empty_kata/empty_alpine_src/Dockerfile)
