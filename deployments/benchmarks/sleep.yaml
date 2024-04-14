@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: idle-pod
+  namespace: energy
+spec:
+    containers:
+    - name: idle
+      image: davidfreina/sleep:latest
+      imagePullPolicy: Never
+      env:
+      - name: SLEEP_TIME
+        value: "120"
+    restartPolicy: Never
