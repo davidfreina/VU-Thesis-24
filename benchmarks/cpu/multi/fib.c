@@ -21,9 +21,10 @@ int main(int argc, char const *argv[])
     int fib_n;
     if (argc != 2)
         printf("Usage: ./fib N\n");
+    printf("The argument supplied is %s\n", argv[1]);
     
     int n = atoi(argv[1]);
-    #pragma omp parallel
+    #pragma omp parallel num_threads(4)
    {
         #pragma omp single
         fib_n = fib(n);
