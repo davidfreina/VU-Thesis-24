@@ -6,4 +6,4 @@ COPY ./fib.c .
 RUN gcc -fopenmp -o fib fib.c
 
 ENV N=10
-CMD ./fib $N
+CMD time ./fib $N
