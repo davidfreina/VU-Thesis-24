@@ -2,9 +2,13 @@ from .generic_input import GenericInput
 
 class NetworkPacketInput(GenericInput):
     def __init__(self, interface: str, energy_per_packet: int):
+        super().__init__()
         self.interface = interface
         self.energy_per_packet = energy_per_packet
         self.previous_packets = self.read_packets()
+
+    def __str__(self):
+        return self.interface
 
     def read_packets(self) -> int:
         with open(f"/sys/class/net/{self.interface}/statistics/tx_packets", 'r') as file:
