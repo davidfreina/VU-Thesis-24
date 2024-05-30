@@ -57,3 +57,8 @@ Group: @Large Research
         - kubectl -n monitoring port-forward svc/grafana 3000
         - Username & Password: ````admin:admin````
 - Install [Helm](https://helm.sh/docs/intro/quickstart/) -->
+
+## Image export/import
+
+- ``docker save -o davidfreina-sleep.tar davidfreina/sleep``
+- ``sudo ctr -a /run/containerd/containerd.sock --namespace k8s.io  image import --base-name davidfreina/sleep davidfreina-sleep.tar``

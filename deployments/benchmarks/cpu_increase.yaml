@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: single-cpu-increase-pod
+  namespace: energy
+spec:
+    containers:
+    - name: fibonacci-increase
+      image: davidfreina/fib_increase:latest
+      imagePullPolicy: Never
+      env:
+      - name: "N"
+        value: "49"
+    restartPolicy: Never
