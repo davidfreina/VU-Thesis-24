@@ -1,4 +1,4 @@
-from generic_input import GenericInput
+from .generic_input import GenericInput
 
 class NetworkPacketInput(GenericInput):
     def __init__(self, interface: str, energy_per_packet: int):

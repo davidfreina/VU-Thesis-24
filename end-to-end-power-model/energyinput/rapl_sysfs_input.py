@@ -1,4 +1,4 @@
-from generic_input import GenericInput
+from .generic_input import GenericInput
 
 class RAPLSysFSInput(GenericInput):
     def __init__(self, rapl_file: str):
