@@ -27,7 +27,10 @@ class EndToEndPowerModel():
 if __name__ == "__main__":
     rapl_file_path = "/sys/class/powercap/intel-rapl:0/energy_uj"
     network_interfaces = ["eno1", "eno2"]
-    energy_per_packet = 10  # Energy per packet in µJ (example value)
+    # According to Reviriego, P., K. Christensen, J. Rabanillo, and J. A. Maestro. ‘An Initial Evaluation of Energy Efficient Ethernet’. IEEE Communications Letters 15, no. 5 (May 2011): 578–80. https://doi.org/10.1109/LCOMM.2011.040111.102259.
+    # 5000 250 byte packets per second use 531mW -> 531mWs -> 0.513J
+    # 1 packet = 0.513J / 5000 = 106.2 µJ
+    energy_per_packet = 106.2  # Energy per packet in µJ (example value)
 
     energy_input_rapl = RAPLSysFSInput(rapl_file_path)
     energy_inputs_network = {iface: NetworkPacketInput(iface, energy_per_packet) for iface in network_interfaces}
