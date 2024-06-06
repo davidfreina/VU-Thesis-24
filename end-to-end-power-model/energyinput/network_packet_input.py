@@ -1,10 +1,10 @@
 from .generic_input import GenericInput
 
 class NetworkPacketInput(GenericInput):
-    def __init__(self, interface: str, energy_per_packet: float):
+    def __init__(self, interface: str, power_per_packet: float):
         super().__init__()
         self.interface = interface
-        self.energy_per_packet = energy_per_packet
+        self.power_per_packet = power_per_packet
         self.previous_packets = self.read_packets()
 
     def __str__(self):
@@ -15,8 +15,8 @@ class NetworkPacketInput(GenericInput):
             packets = int(file.read().strip())
         return packets
 
-    def read_energy(self) -> float:
+    def get_energy(self) -> float:
         current_packets = self.read_packets()
         packets_transmitted = current_packets - self.previous_packets
         self.previous_packets = current_packets
-        return packets_transmitted * self.energy_per_packet
+        return packets_transmitted * self.power_per_packet

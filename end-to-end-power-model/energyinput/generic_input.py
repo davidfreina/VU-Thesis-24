@@ -7,8 +7,6 @@ class GenericInput(ABC):
         self.previous_energy = 0
 
     @abstractmethod
-    def read_energy(self) -> int:
+    def get_energy(self) -> int:
         pass
 
-    def handle_overflow(self, current_energy: int) -> int:
-        return current_energy - self.previous_energy
