@@ -17,7 +17,6 @@ class CPUMaxIdleInput(GenericInput):
 
     def get_energy(self) -> float:
         per_core_usage = psutil.cpu_percent(percpu=True, interval=None)
-        print(per_core_usage)
         # https://doi.org/10.1145/1250662.1250665
         if self.model == "fan2007":
             return self.p_idle + (self.p_max - self.p_idle) * per_core_usage[0]
