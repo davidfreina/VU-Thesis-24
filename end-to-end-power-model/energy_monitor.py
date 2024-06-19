@@ -38,7 +38,7 @@ class EndToEndPowerModel():
 
 
 def handle_endpoint():
-    energy_input_wifi = WiFiEstimatorInput("eno1", 20, 0.110, 0.1407, 0.002, 0.007)
+    energy_input_wifi = WiFiEstimatorInput("ens2", 20, 0.110, 0.1407, 0.002, 0.007)
     energy_input_cpu = CPUMaxIdleInput(p_base=0.190, model="yoon2017")
     energy_input_camera = CameraInput()
     energy_inputs = {str(energy_input_camera): energy_input_camera, str(energy_input_wifi): energy_input_wifi, str(energy_input_cpu): energy_input_cpu}
@@ -52,7 +52,7 @@ def handle_endpoint():
 
 def handle_edge():
     energy_input_cpu = CPUMaxIdleInput(p_base=1.488, model="kaup2018")
-    energy_input_network = NetworkInput("eno1", "ardito2018")
+    energy_input_network = NetworkInput("ens2", "ardito2018")
     energy_inputs = {str(energy_input_network): energy_input_network, str(energy_input_cpu): energy_input_cpu}
     energy_output = ConsoleOutput()
     csv_output = CsvOutput("/home/dfreina/edge.csv")
@@ -64,8 +64,7 @@ def handle_edge():
 
 def handle_cloud():
     rapl_file_path = "/sys/class/powercap/intel-rapl:0/energy_uj"
-    network_interfaces = ["eno1"]
-
+    network_interfaces = ["ens2"]
 
     energy_input_rapl = RAPLSysFSInput(rapl_file_path)
     energy_inputs_network = {iface: NetworkInput(iface, "reviriego2011") for iface in network_interfaces}
@@ -73,7 +72,7 @@ def handle_cloud():
 
     energy_output = ConsoleOutput()
 
-    monitor = EndToEndPowerModel(energy_inputs, energy_output)
+    monitor = EndToEndPowerModel(energy_inputs, [energy_output])
     monitor.monitor_energy()
 
 
