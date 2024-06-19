@@ -1,4 +1,5 @@
 from .generic_input import GenericInput
+from typing import Tuple
 
 # Based on:
 # Yoon, Chanmin & Kim, Dongwon & Jung, Wonwoo & Kang, Chulkoo & Cha, Hojung. (2012). AppScope: Application Energy Metering Framework for Android Smartphones using Kernel Activity Monitoring. USENIX ATC.
@@ -8,7 +9,7 @@ class WiFiEstimatorInput(GenericInput):
                  power_per_packet_low_power: float = 0.0012, power_per_packet_high_power: float = 0.008):
         super().__init__()
         self.interface = interface
-        self.previous_packets = self.read_packets()
+        self.previous_packets_up, self.previous_packets_down = self.read_packets()
         self.threshold = pps_threshold
         self.blp = base_low_power
         self.bhp = base_high_power
@@ -19,20 +20,22 @@ class WiFiEstimatorInput(GenericInput):
     def __str__(self):
         return self.interface
 
-    def read_packets(self) -> int:
-        # with open(f"/sys/class/net/{self.interface}/statistics/tx_packets", 'r') as file:
-        with open(f"/home/dfreina/tx_packets_simulation", 'r') as file:
-            packets = int(file.read().strip())
-        return packets
+    def read_packets(self) -> Tuple[int, int]:
+        with open(f"/sys/class/net/{self.interface}/statistics/tx_packets", 'r') as file:
+            packets_up = int(file.read().strip())
+        with open(f"/sys/class/net/{self.interface}/statistics/rx_packets", 'r') as file:
+            packets_down = int(file.read().strip())
+        return packets_up, packets_down
 
     def get_energy(self) -> float:
-        current_packets = self.read_packets()
-        packets_transmitted = current_packets - self.previous_packets
-        self.previous_packets = current_packets
-        print(packets_transmitted)
+        current_packets_up, current_packets_down = self.read_packets()
+        packets_up = current_packets_up - self.previous_packets_up
+        packets_down = current_packets_down - self.previous_packets_down
+        self.previous_packets_up = current_packets_up
+        self.previous_packets_down = current_packets_down
         # If the amount of packets transmitted in 1 second is bigger than the
         # given threshold the Wi-Fi card would switch into high power transmission mode
         # Otherwise it would use low power transmission mode
-        if packets_transmitted > self.threshold:
-            return self.ppphp * packets_transmitted + self.bhp
-        return self.ppplp * packets_transmitted + self.blp
+        if (packets_up + packets_down) > self.threshold:
+            return self.ppphp * (packets_up + packets_down) + self.bhp
+        return self.ppplp * (packets_up + packets_down) + self.blp
