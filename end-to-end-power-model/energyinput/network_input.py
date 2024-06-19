@@ -13,14 +13,14 @@ class NetworkInput(GenericInput):
     def __str__(self):
         return self.interface
 
-    def read_packets(self) -> tuple[int, int]:
+    def read_packets(self) -> Tuple[int, int]:
         with open(f"/sys/class/net/{self.interface}/statistics/tx_packets", 'r') as file:
             packets_up = int(file.read().strip())
         with open(f"/sys/class/net/{self.interface}/statistics/rx_packets", 'r') as file:
             packets_down = int(file.read().strip())
         return packets_up, packets_down
 
-    def read_bytes(self) -> tuple[int, int]:
+    def read_bytes(self) -> Tuple[int, int]:
         with open(f"/sys/class/net/{self.interface}/statistics/tx_bytes", 'r') as file:
             curr_up_bytes = int(file.read().strip())
         with open(f"/sys/class/net/{self.interface}/statistics/rx_bytes", 'r') as file:
