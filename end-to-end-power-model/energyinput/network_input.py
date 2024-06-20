@@ -39,14 +39,18 @@ class NetworkInput(GenericInput):
             self.previous_up_bytes = current_up_bytes
             self.previous_down_bytes = current_down_bytes
             if bw_up_mbps <= 41.2:
-                e_up = 0.00164 * bw_up_mbps + 1.613
+                p_idle_up = 1.613
+                e_up = 0.00164 * bw_up_mbps
             else:
-                e_up = 0.00182 * bw_up_mbps + 1.685
+                p_idle_up = 1.685
+                e_up = 0.00182 * bw_up_mbps
             if bw_down_mpbs <= 42.5:
-                e_down = 0.00162 * bw_down_mpbs + 1.654
+                p_idle_down = 1.654
+                e_down = 0.00162 * bw_down_mpbs
             else:
-                e_down = 0.00210 * bw_down_mpbs + 1.728
-            return e_up + e_down
+                p_idle_down = 1.728
+                e_down = 0.00210 * bw_down_mpbs
+            return e_up + e_down + (p_idle_up + p_idle_down) / 2
         if self.model == "reviriego2011":
             # According to Reviriego, P., K. Christensen, J. Rabanillo, and J. A. Maestro. ‘An Initial Evaluation of Energy Efficient Ethernet’. IEEE Communications Letters 15, no. 5 (May 2011): 578–80. https://doi.org/10.1109/LCOMM.2011.040111.102259.
             # No Traffic on the NIC uses 525mW
@@ -59,7 +63,7 @@ class NetworkInput(GenericInput):
             self.utilization_packets = packets_up + packets_down
             self.previous_up_packets = current_up_packets
             self.previous_down_packets = current_down_packets
-            return (packets_up + packets_down) * power_per_packet
+            return (packets_up + packets_down) * power_per_packet + 0.525
 
     def get_utilization(self) -> float:
         if self.model == "ardito2018":
