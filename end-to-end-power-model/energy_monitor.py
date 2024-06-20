@@ -1,6 +1,7 @@
 import sys
 from abc import ABC, abstractmethod
 from energyinput.rapl_sysfs_input import RAPLSysFSInput
+from energyinput.rapl_sysfs_mem_input import RAPLSysFSMemInput
 from energyinput.network_input import NetworkInput
 from energyinput.cpu_max_idle_input import CPUMaxIdleInput
 from energyinput.wifi_estimator_input import WiFiEstimatorInput
@@ -62,16 +63,19 @@ def handle_edge():
 
 
 def handle_cloud():
-    rapl_file_path = "/sys/class/powercap/intel-rapl:0/energy_uj"
-    network_interfaces = ["ens2"]
+    rapl_paths = ["/sys/class/powercap/intel-rapl:0/energy_uj", "/sys/class/powercap/intel-rapl:1/energy_uj"]
+    rapl_mem_paths = ["/sys/class/powercap/intel-rapl:0:0/energy_uj", "/sys/class/powercap/intel-rapl:1:0/energy_uj"]
+    network_interfaces = ["eno1"]
 
-    energy_input_rapl = RAPLSysFSInput(rapl_file_path)
+    energy_input_rapl_cpu = RAPLSysFSInput(rapl_paths)
+    energy_inputs_rapl_mem = {path.split('/').pop(-2): RAPLSysFSMemInput(path) for path in rapl_mem_paths}
     energy_inputs_network = {iface: NetworkInput(iface, "reviriego2011") for iface in network_interfaces}
-    energy_inputs = {str(energy_input_rapl): energy_input_rapl, **energy_inputs_network}
+    energy_inputs = {str(energy_input_rapl_cpu): energy_input_rapl_cpu, **energy_inputs_rapl_mem, **energy_inputs_network}
 
     energy_output = ConsoleOutput()
+    csv_output = CsvOutput("/home/dfreina/cloud.csv")
 
-    monitor = EndToEndPowerModel(energy_inputs, [energy_output])
+    monitor = EndToEndPowerModel(energy_inputs, [energy_output, csv_output])
     monitor.monitor_energy()
 
 
