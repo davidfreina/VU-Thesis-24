@@ -41,7 +41,7 @@ class CPUMaxIdleInput(GenericInput):
             else:
                 self.logger.error("This model only works for CPUs with 1-4 cores!")
                 self.p_base = 0
-            per_core_energy = [self.coefficient * usage + self.p_idle + self.p_base for usage in per_core_usage]
+            per_core_energy = [self.coefficient * usage / 100 + self.p_idle + self.p_base for usage in per_core_usage]
             return sum(per_core_energy)
         elif self.model == "kaup2018":
             utilization = sum(per_core_usage) / psutil.cpu_count() / 100

@@ -20,7 +20,10 @@ class CameraInput(GenericInput):
         return "CameraModel"
 
     def get_energy(self) -> float:
-        pixel_per_second = self.res_w * self.res_h * self.fps
-        return ((self.p_coefficient * pixel_per_second + self.p_idle) +
-                (self.p_coefficient_enc * pixel_per_second + self.p_idle_enc))
-
+        cam_e = 0
+        for proc in psutil.process_iter(["name", "username"]):
+            if proc.info["username"] != "root" and "docker" in proc.info["name"]:
+                pixel_per_second = self.res_w * self.res_h * self.fps
+                cam_e = ((self.p_coefficient * pixel_per_second + self.p_idle) +
+                         (self.p_coefficient_enc * pixel_per_second + self.p_idle_enc))
+        return cam_e
