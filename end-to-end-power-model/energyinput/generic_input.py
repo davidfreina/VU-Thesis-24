@@ -10,6 +10,9 @@ class GenericInput(ABC):
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
     @abstractmethod
-    def get_energy(self) -> int:
+    def get_energy(self) -> float:
         pass
 
+    @abstractmethod
+    def get_utilization(self) -> float:
+        pass

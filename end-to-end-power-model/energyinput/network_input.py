@@ -56,3 +56,9 @@ class NetworkInput(GenericInput):
             self.previous_up_packets = current_up_packets
             self.previous_down_packets = current_down_packets
             return (packets_up + packets_down) * power_per_packet
+
+    def get_utilization(self) -> float:
+        if self.model == "ardito2018":
+            return self.previous_down_bytes + self.previous_up_bytes
+        elif self.model == "reviriego2011":
+            return self.previous_down_packets + self.previous_up_packets

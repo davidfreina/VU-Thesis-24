@@ -16,10 +16,10 @@ class CsvOutput(GenericOutput):
         if timestamp not in self.data:
             self.data[timestamp] = {}
         for device, power in power.items():
-            self.data[timestamp][str(device)] = power
-        if len(self.data) > 10:
-            #self.save_to_csv()
-            self.data = {}
+            self.data[timestamp][str(device)] = power[0]
+            self.data[timestamp][f'{device} Utilization'] = power[1]
+        self.save_to_csv()
+        self.data = {}
 
     def save_to_csv(self):
         headers = ['Timestamp']

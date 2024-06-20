@@ -22,17 +22,16 @@ class EndToEndPowerModel():
     def monitor_energy(self):
         counter = 1
         while True:
-            current_energies = {input_source: input_source.get_energy() for device, input_source in self.input_sources.items()}
-            for device, current_energy in current_energies.items():
-                self.total_energy[str(device)] += current_energy
-                self.current_energy[str(device)] = current_energy
+            current_values = {input_source: [input_source.get_energy(), input_source.get_utilization()] for device, input_source in self.input_sources.items()}
+            for device, current in current_values.items():
+                self.total_energy[str(device)] += current[0]
+                self.current_energy[str(device)] = current[0]
                 for output in self.output_destinations:
                     if str(output) == "ConsoleOutput":
                         output.report_power(str(device), self.current_energy[str(device)])
-                #print(f"Energy used by {device}: {(self.total_energy[str(device)] / counter * (counter / 60 / 60)):.1f} Wh")
             for output in self.output_destinations:
                 if str(output) == "CsvOutput":
-                    output.report_power(current_energies)
+                    output.report_power(current_values)
             counter += 1
             time.sleep(1)
 

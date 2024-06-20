@@ -15,6 +15,7 @@ class CameraInput(GenericInput):
         self.res_w = resolution_w
         self.fps = fps
         self.previous_energy = self.get_energy()
+        self.active = False
 
     def __str__(self):
         return "CameraModel"
@@ -23,7 +24,13 @@ class CameraInput(GenericInput):
         cam_e = 0
         for proc in psutil.process_iter(["name", "username"]):
             if proc.info["username"] != "root" and "docker" in proc.info["name"]:
+                self.active = True
                 pixel_per_second = self.res_w * self.res_h * self.fps
                 cam_e = ((self.p_coefficient * pixel_per_second + self.p_idle) +
                          (self.p_coefficient_enc * pixel_per_second + self.p_idle_enc))
+            else:
+                self.active = False
         return cam_e
+
+    def get_utilization(self) -> bool:
+        return self.active
