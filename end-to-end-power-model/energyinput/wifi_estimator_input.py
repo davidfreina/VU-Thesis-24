@@ -39,3 +39,6 @@ class WiFiEstimatorInput(GenericInput):
         if (packets_up + packets_down) > self.threshold:
             return self.ppphp * (packets_up + packets_down) + self.bhp
         return self.ppplp * (packets_up + packets_down) + self.blp
+
+    def get_utilization(self) -> float:
+        return self.previous_packets_up + self.previous_packets_down
