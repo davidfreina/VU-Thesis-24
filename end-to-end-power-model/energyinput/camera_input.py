@@ -23,7 +23,7 @@ class CameraInput(GenericInput):
     def get_energy(self) -> float:
         cam_e = 0
         for proc in psutil.process_iter(["name", "username"]):
-            if proc.info["username"] != "root" and "docker" in proc.info["name"]:
+            if "publisher.py" in proc.cmdline():
                 self.active = True
                 pixel_per_second = self.res_w * self.res_h * self.fps
                 cam_e = ((self.p_coefficient * pixel_per_second + self.p_idle) +
