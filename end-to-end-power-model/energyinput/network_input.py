@@ -8,6 +8,8 @@ class NetworkInput(GenericInput):
         self.interface = interface
         self.previous_up_packets, self.previous_down_packets = self.read_packets()
         self.previous_up_bytes, self.previous_down_bytes = self.read_bytes()
+        self.utilization_bytes = 0
+        self.utilization_packets = 0
         self.model = model
 
     def __str__(self):
@@ -33,6 +35,7 @@ class NetworkInput(GenericInput):
             current_up_bytes, current_down_bytes = self.read_bytes()
             bw_up_mbps = (current_up_bytes - self.previous_up_bytes) / 1048576
             bw_down_mpbs = (current_down_bytes - self.previous_down_bytes) / 1048576
+            self.utilization_bytes = bw_up_mbps + bw_down_mpbs
             self.previous_up_bytes = current_up_bytes
             self.previous_down_bytes = current_down_bytes
             if bw_up_mbps <= 41.2:
@@ -53,12 +56,13 @@ class NetworkInput(GenericInput):
             current_up_packets, current_down_packets = self.read_packets()
             packets_up = current_up_packets - self.previous_up_packets
             packets_down = current_down_packets - self.previous_down_packets
+            self.utilization_packets = packets_up + packets_down
             self.previous_up_packets = current_up_packets
             self.previous_down_packets = current_down_packets
             return (packets_up + packets_down) * power_per_packet
 
     def get_utilization(self) -> float:
         if self.model == "ardito2018":
-            return self.previous_down_bytes + self.previous_up_bytes
+            return self.utilization_bytes
         elif self.model == "reviriego2011":
-            return self.previous_down_packets + self.previous_up_packets
+            return self.utilization_packets

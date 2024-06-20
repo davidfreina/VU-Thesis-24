@@ -15,6 +15,7 @@ class WiFiEstimatorInput(GenericInput):
         self.bhp = base_high_power
         self.ppplp = power_per_packet_low_power
         self.ppphp = power_per_packet_high_power
+        self.utilization = 0
 
 
     def __str__(self):
@@ -31,6 +32,7 @@ class WiFiEstimatorInput(GenericInput):
         current_packets_up, current_packets_down = self.read_packets()
         packets_up = current_packets_up - self.previous_packets_up
         packets_down = current_packets_down - self.previous_packets_down
+        self.utilization = packets_up + packets_down
         self.previous_packets_up = current_packets_up
         self.previous_packets_down = current_packets_down
         # If the amount of packets transmitted in 1 second is bigger than the
@@ -41,4 +43,4 @@ class WiFiEstimatorInput(GenericInput):
         return self.ppplp * (packets_up + packets_down) + self.blp
 
     def get_utilization(self) -> float:
-        return self.previous_packets_up + self.previous_packets_down
+        return self.utilization
