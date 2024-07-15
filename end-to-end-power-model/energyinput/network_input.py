@@ -11,6 +11,10 @@ class NetworkInput(GenericInput):
         self.utilization_bytes = 0
         self.utilization_packets = 0
         self.model = model
+        if self.model == "ardito2018":
+            self.utilization_unit = "Mbps"
+        if self.model == "reviriego2011":
+            self.utilization_unit = "pps"
 
     def __str__(self):
         return self.interface

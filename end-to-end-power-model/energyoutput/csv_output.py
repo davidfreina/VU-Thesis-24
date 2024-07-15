@@ -16,8 +16,8 @@ class CsvOutput(GenericOutput):
         if timestamp not in self.data:
             self.data[timestamp] = {}
         for device, power in power.items():
-            self.data[timestamp][str(device)] = power[0]
-            self.data[timestamp][f'{device} Utilization'] = power[1]
+            self.data[timestamp][f'{device} ({device.power_unit})'] = power[0]
+            self.data[timestamp][f'{device} Utilization ({device.utilization_unit})'] = power[1]
         self.save_to_csv()
         self.data = {}
 

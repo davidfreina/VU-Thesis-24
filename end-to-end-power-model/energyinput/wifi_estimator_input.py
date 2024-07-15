@@ -2,11 +2,11 @@ from .generic_input import GenericInput
 from typing import Tuple
 
 # Based on:
-# Yoon, Chanmin & Kim, Dongwon & Jung, Wonwoo & Kang, Chulkoo & Cha, Hojung. (2012). AppScope: Application Energy Metering Framework for Android Smartphones using Kernel Activity Monitoring. USENIX ATC.
+# C. Yoon, S. Lee, Y. Choi, R. Ha, and H. Cha, ‘Accurate power modeling of modern mobile application processors’, Journal of Systems Architecture, vol. 81, pp. 17–31, Nov. 2017, doi: 10.1016/j.sysarc.2017.10.001.
 class WiFiEstimatorInput(GenericInput):
     def __init__(self, interface: str, pps_threshold: int = 25,
-                 base_low_power: float = 0.2387, base_high_power: float = 0.2470,
-                 power_per_packet_low_power: float = 0.0012, power_per_packet_high_power: float = 0.008):
+                 base_low_power: float = 0.099, base_high_power: float = 0.199,
+                 power_per_packet_low_power: float = 0.00504, power_per_packet_high_power: float = 0.000211):
         super().__init__()
         self.interface = interface
         self.previous_packets_up, self.previous_packets_down = self.read_packets()
@@ -16,7 +16,7 @@ class WiFiEstimatorInput(GenericInput):
         self.ppplp = power_per_packet_low_power
         self.ppphp = power_per_packet_high_power
         self.utilization = 0
-
+        self.utilization_unit = "pps"
 
     def __str__(self):
         return self.interface

@@ -8,6 +8,8 @@ class GenericInput(ABC):
         self.previous_energy = 0
         self.logger = logging.getLogger(self.__class__.__name__)
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        self.utilization_unit = "%"
+        self.power_unit = "W"
 
     @abstractmethod
     def get_energy(self) -> float:

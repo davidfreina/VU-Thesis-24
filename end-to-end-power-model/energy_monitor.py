@@ -44,7 +44,7 @@ def handle_endpoint():
     energy_inputs = {str(energy_input_camera): energy_input_camera, str(energy_input_wifi): energy_input_wifi, str(energy_input_cpu): energy_input_cpu}
 
     energy_output = ConsoleOutput()
-    csv_output = CsvOutput("/home/dfreina/endpoint.csv")
+    csv_output = CsvOutput("endpoint.csv")
 
     monitor = EndToEndPowerModel(energy_inputs, [energy_output, csv_output])
     monitor.monitor_energy()
@@ -55,7 +55,7 @@ def handle_edge():
     energy_input_network = NetworkInput("ens2", "ardito2018")
     energy_inputs = {str(energy_input_network): energy_input_network, str(energy_input_cpu): energy_input_cpu}
     energy_output = ConsoleOutput()
-    csv_output = CsvOutput("/home/dfreina/edge.csv")
+    csv_output = CsvOutput("edge.csv")
 
     monitor = EndToEndPowerModel(energy_inputs, [energy_output, csv_output])
     monitor.monitor_energy()
@@ -73,7 +73,7 @@ def handle_cloud():
     energy_inputs = {str(energy_input_rapl_cpu): energy_input_rapl_cpu, **energy_inputs_rapl_mem, **energy_inputs_network}
 
     energy_output = ConsoleOutput()
-    csv_output = CsvOutput("/home/dfreina/cloud.csv")
+    csv_output = CsvOutput("cloud.csv")
 
     monitor = EndToEndPowerModel(energy_inputs, [energy_output, csv_output])
     monitor.monitor_energy()
