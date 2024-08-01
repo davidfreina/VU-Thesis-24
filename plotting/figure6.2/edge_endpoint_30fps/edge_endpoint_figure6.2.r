@@ -1,10 +1,12 @@
-# Load required libraries
 library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(scales)
 setwd(getSrcDirectory(function(){})[1])
 
 process_data <- function(file_path) {
   data <- read.csv(file_path, check.names=FALSE)
-  
+
   data$Timestamp <- data$Timestamp - min(data$Timestamp)
   if ("intel-rapl:0:0 (W)" %in% names(data)) {
     if ("intel-rapl:1:0 (W)" %in% names(data)) {
@@ -15,18 +17,18 @@ process_data <- function(file_path) {
       data = subset(data, select = -c(`intel-rapl:0:0 (W)`))
     }
   }
-  
+
   columns_with_units <- grep("\\(.*\\)", names(data), value = TRUE)
   data <- data %>% select(Timestamp, all_of(columns_with_units))
-  
+
   if ("CPUMaxIdleModel Utilization (%)" %in% names(data)) {
     data$`CPUMaxIdleModel Utilization (%)` <- sapply(data$`CPUMaxIdleModel Utilization (%)`, function(x) {
       sum(as.numeric(unlist(strsplit(gsub("\\[|\\]", "", x), ","))))
     })
   }
-  
+
   melted_data <- melt(data, id.vars = 'Timestamp')
-  
+
   if ("CameraModel (W)" %in% names(data)) {
     variable_labels <- c(
       `eno1 (W)` = 'NIC (W)',
@@ -54,9 +56,9 @@ process_data <- function(file_path) {
       `CPUMaxIdleModel Utilization (%)` = 'CPU (%)'
     )
   }
-  
+
   melted_data$variable <- factor(melted_data$variable, levels = names(variable_labels), labels = variable_labels)
-  
+
   return(melted_data)
 }
 
@@ -64,10 +66,22 @@ endpoint_data <- process_data('endpoint.csv')
 edge_data <- process_data('edge.csv')
 
 plot_data <- function(data, title) {
+  custom_colors <- c(
+    'NIC (W)' = '#1f77b4',
+    'NIC (pps)' = '#ff7f0e',
+    'NIC (Mbps)' = '#ff7f0e',
+    'Memory (W)' = '#2ca02c',
+    'Camera (W)' = '#d62728',
+    'WiFi (W)' = '#1f77b4',
+    'WiFi (pps)' = '#ff7f0e',
+    'CPU (W)' = '#e377c2',
+    'CPU (%)' = '#7f7f7f'
+  )
   return (ggplot(data, aes(x = Timestamp, y = value, color = variable)) +
     geom_line(size=2) +
+    scale_color_manual(values = custom_colors) +
     scale_x_continuous(labels = comma) +
-    scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)), limits = c(10^-4, 10^4)) +
     labs(title = title, x = 'Time (seconds)', y = '') +
     theme_minimal() +
     theme(axis.text = element_text(size = 42),
